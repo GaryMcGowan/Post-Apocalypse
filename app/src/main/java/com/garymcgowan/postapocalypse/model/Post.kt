@@ -1,4 +1,4 @@
-package com.garymcgowan.postapocalypse.network
+package com.garymcgowan.postapocalypse.model
 
 import com.squareup.moshi.Json
 
@@ -9,3 +9,9 @@ data class Post(
     @Json(name = "body") val body: String? = null,
     @Json(name = "userId") val userId: Int? = null
 )
+
+sealed class PostState {
+    object Loading : PostState()
+    data class Content(val posts: List<Post>) : PostState()
+    data class Error(val throwable: Throwable) : PostState()
+}

@@ -1,5 +1,8 @@
 package com.garymcgowan.postapocalypse.network
 
+import com.garymcgowan.postapocalypse.model.Comment
+import com.garymcgowan.postapocalypse.model.Post
+import com.garymcgowan.postapocalypse.model.User
 import io.reactivex.Single
 import retrofit2.http.GET
 

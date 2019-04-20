@@ -1,4 +1,4 @@
-package com.garymcgowan.postapocalypse.network
+package com.garymcgowan.postapocalypse.model
 
 import com.squareup.moshi.Json
 
