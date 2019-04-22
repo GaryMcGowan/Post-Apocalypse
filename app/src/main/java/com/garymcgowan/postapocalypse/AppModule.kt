@@ -4,14 +4,13 @@ import android.content.Context
 import com.garymcgowan.postapocalypse.core.AppSchedulerProvider
 import com.garymcgowan.postapocalypse.core.SchedulerProvider
 import com.garymcgowan.postapocalypse.network.NetworkModule
+import com.garymcgowan.postapocalypse.view.base.ViewModule
 import dagger.Module
 import dagger.Provides
-import dagger.android.ContributesAndroidInjector
 import javax.inject.Singleton
 
 @Module(
-    includes = [
-        ActivityModule::class,
+    includes = [ViewModule::class,
         NetworkModule::class
     ]
 )
@@ -27,12 +26,4 @@ class AppModule {
     @Provides
     @Singleton
     fun providesSchedulers(): SchedulerProvider = AppSchedulerProvider()
-}
-
-@Module
-abstract class ActivityModule {
-
-    @ContributesAndroidInjector
-    abstract fun bindMainActivity(): MainActivity
-
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/nav_graph"
+            app:startDestination="@+id/navigation_list">
+
+    <fragment
+        android:id="@+id/navigation_list"
+        android:name="com.garymcgowan.postapocalypse.view.postlist.PostListFragment"
+        android:label="@string/nav_post_list">
+        <action android:id="@+id/action_navigation_list_to_navigation_details"
+                app:destination="@id/navigation_details"/>
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_bookmarks"
+        android:name="com.garymcgowan.postapocalypse.view.bookmarks.BookmarksFragment"
+        android:label="@string/nav_bookmarks">
+        <action android:id="@+id/action_navigation_bookmarks_to_navigation_details"
+                app:destination="@id/navigation_details"/>
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_details"
+        android:name="com.garymcgowan.postapocalypse.view.postdetails.PostDetailsFragment"
+        android:label="@string/nav_details">
+    </fragment>
+
+</navigation>

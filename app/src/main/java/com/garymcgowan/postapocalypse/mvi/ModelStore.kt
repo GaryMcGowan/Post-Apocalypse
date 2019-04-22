@@ -1,6 +1,7 @@
-package com.garymcgowan.postapocalypse.model
+package com.garymcgowan.postapocalypse.mvi
 
-import com.garymcgowan.postapocalypse.intention.Intent
+import com.garymcgowan.postapocalypse.model.Model
+import com.garymcgowan.postapocalypse.mvi.intent.Intent
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

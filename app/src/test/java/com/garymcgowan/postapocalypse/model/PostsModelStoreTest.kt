@@ -1,6 +1,8 @@
 package com.garymcgowan.postapocalypse.model
 
-import com.garymcgowan.postapocalypse.intention.intent
+import com.garymcgowan.postapocalypse.mvi.PostsModelStore
+import com.garymcgowan.postapocalypse.mvi.intent.intent
+import com.garymcgowan.postapocalypse.mvi.state.PostState
 import com.garymcgowan.postapocalypse.utils.ReplaceMainThreadSchedulerRule
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +28,11 @@ class PostsModelStoreTest {
     @Test
     fun `State Changes`() {
 
-        postsModelStore.process(intent { PostState.Error(Throwable("test")) })
+        postsModelStore.process(intent {
+            PostState.Error(
+                Throwable("test")
+            )
+        })
 
         val testObs = postsModelStore.modelState().test()
 

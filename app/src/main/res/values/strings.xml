@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Post-Apocalypse</string>
+
+    <string name="nav_post_list">Posts</string>
+    <string name="nav_bookmarks">Bookmarks</string>
+    <string name="nav_details">Details</string>
 </resources>

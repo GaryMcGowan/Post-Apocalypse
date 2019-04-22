@@ -1,6 +1,6 @@
 package com.garymcgowan.postapocalypse.model
 
-import com.garymcgowan.postapocalypse.intention.Intent
+import com.garymcgowan.postapocalypse.mvi.intent.Intent
 import io.reactivex.Observable
 
 

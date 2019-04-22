@@ -1,4 +1,4 @@
-package com.garymcgowan.postapocalypse.view
+package com.garymcgowan.postapocalypse.mvi.viewevent
 
 import io.reactivex.Observable
 

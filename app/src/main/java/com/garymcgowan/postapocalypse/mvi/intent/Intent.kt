@@ -1,4 +1,4 @@
-package com.garymcgowan.postapocalypse.intention
+package com.garymcgowan.postapocalypse.mvi.intent
 
 interface Intent<T> {
     fun reduce(oldState: T): T
