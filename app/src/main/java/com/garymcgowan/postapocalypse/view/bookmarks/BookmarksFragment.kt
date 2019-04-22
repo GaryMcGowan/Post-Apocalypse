@@ -12,6 +12,6 @@ class BookmarksFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_post_details, container, false)
+        return inflater.inflate(R.layout.fragment_post_list, container, false)
     }
 }

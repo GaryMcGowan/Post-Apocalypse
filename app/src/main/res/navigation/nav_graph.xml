@@ -22,6 +22,9 @@
         android:id="@+id/navigation_details"
         android:name="com.garymcgowan.postapocalypse.view.postdetails.PostDetailsFragment"
         android:label="@string/nav_details">
+        <argument
+            android:name="post"
+            app:argType="com.garymcgowan.postapocalypse.model.Post" />
     </fragment>
 
 </navigation>

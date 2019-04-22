@@ -4,17 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.Navigation
+import android.widget.Toast
+import androidx.navigation.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.garymcgowan.postapocalypse.R
-import com.garymcgowan.postapocalypse.mvi.PostsModelStore
-import com.garymcgowan.postapocalypse.mvi.intent.PostsListIntentFactory
-import com.garymcgowan.postapocalypse.mvi.state.PostState
-import com.garymcgowan.postapocalypse.mvi.state.StateSubscriber
-import com.garymcgowan.postapocalypse.mvi.viewevent.EventObservable
-import com.garymcgowan.postapocalypse.mvi.viewevent.PostsListViewEvent
+import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.view.base.BaseFragment
-import com.jakewharton.rxbinding3.swiperefreshlayout.refreshes
+import com.garymcgowan.postapocalypse.view.postlist.mvp.PostListContract
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.OnItemClickListener
@@ -22,49 +19,13 @@ import com.xwray.groupie.ViewHolder
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.MainThreadDisposable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_post_list.*
 import javax.inject.Inject
 
 
-open class PostListFragment : BaseFragment(), EventObservable<PostsListViewEvent>,
-    StateSubscriber<PostState> {
+open class PostListFragment : BaseFragment(), PostListContract.View {
 
-    @Inject lateinit var postsModelStore: PostsModelStore
-    @Inject lateinit var intentFactory: PostsListIntentFactory
-
-    private val disposables = CompositeDisposable()
-
-    override fun events(): Observable<PostsListViewEvent> = Observable.merge(Observable.just(
-        PostsListViewEvent.InitPostsList
-    ),
-        swipeRefresh.refreshes().map { PostsListViewEvent.RefreshPostsList },
-        groupAdapter.itemClicks().map {
-            when (it) {
-                is PostItem -> PostsListViewEvent.PostPressed(it.getPost())
-                else -> throw NotImplementedError("Groupie item click not implemented")
-            }
-        })
-
-    override fun Observable<PostState>.subscribeToState(): Disposable = subscribe { state ->
-        when (state) {
-            PostState.Loading -> swipeRefresh.isRefreshing = true
-            is PostState.Content -> {
-                groupAdapter.addAll(state.posts.map { PostItem(it) })
-                swipeRefresh.isRefreshing = false
-            }
-            is PostState.Error -> {
-                swipeRefresh.isRefreshing = false
-            }
-            is PostState.PostPressed -> {
-                view?.let {
-                    Navigation.findNavController(it).navigate(R.id.navigation_details)
-                }
-            }
-        }
-    }
+    @Inject lateinit var presenter: PostListContract.Presenter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -77,22 +38,67 @@ open class PostListFragment : BaseFragment(), EventObservable<PostsListViewEvent
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         listRecyclerView.layoutManager = LinearLayoutManager(context)
+        listRecyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
         listRecyclerView.adapter = groupAdapter
 
+        groupAdapter.setOnItemClickListener { item, _ ->
+            when (item) {
+                is PostItem -> presenter.onItemPressed(item.getPost())
+                else -> throw NotImplementedError("Groupie item click not implemented")
+            }
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        disposables += postsModelStore.modelState().subscribeToState()
-        disposables += events().subscribe(intentFactory::process)
+    override fun onStart() {
+        super.onStart()
+        presenter.takeView(this)
     }
 
-    override fun onPause() {
-        super.onPause()
-        disposables.clear()
+    override fun onStop() {
+        super.onStop()
+        presenter.dropView()
     }
 
+    override fun showPostListLoading() {
+        swipeRefresh.isRefreshing = true
+    }
+
+    override fun hidePostListLoading() {
+        swipeRefresh.isRefreshing = false
+    }
+
+    override fun displayPostList(posts: List<Post>) {
+        groupAdapter.addAll(posts.map { PostItem(it) })
+    }
+
+    override fun displayErrorForPostList() {
+        Toast.makeText(context, "Posts couldn't not be loaded", Toast.LENGTH_LONG).show()
+    }
+
+    override fun goToPost(post: Post) {
+//        context?.let {  NavDeepLinkBuilder(it)
+//            .setGraph(R.navigation.nav_graph)
+//            .setDestination(R.id.navigation_details)
+//            .setArguments(Bundle().apply {
+//                putParcelable("post", post)
+//            })
+//            .createPendingIntent().send()
+//        }
+//        val action = PostDetailsFragmentDirections.
+        view?.findNavController()
+            ?.navigate(PostListFragmentDirections.actionNavigationListToNavigationDetails(post))
+//        view?.let { Navigation.findNavController(it).navigate(
+//            PostDetailsFragmentArgs.
+//            R.id.navigation_details
+//        ) }
+    }
 }
 
 private fun GroupAdapter<ViewHolder>.itemClicks(): Observable<Item<*>> = ItemClicksObservable(this)
