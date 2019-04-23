@@ -1,32 +1,23 @@
-package com.garymcgowan.postapocalypse.view.postlist
+package com.garymcgowan.postapocalypse.view.postdetails
 
 import com.garymcgowan.postapocalypse.R
-import com.garymcgowan.postapocalypse.model.Comment
 import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.model.User
-import com.garymcgowan.postapocalypse.network.ImageLoader
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
-import kotlinx.android.synthetic.main.item_post.*
+import kotlinx.android.synthetic.main.item_post_body.*
 
-class PostItem(
+class PostBodyItem(
     val post: Post,
-    val user: User,
-    val comments: List<Comment>,
-    private val imageLoader: ImageLoader? = null
+    val user: User
 ) : Item(post.getId()) {
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.userName.text = user.name
         viewHolder.postTitle.text = post.title
-
-        viewHolder.commentCount.apply {
-            text = resources.getString(R.string.number_comments, comments.size)
-        }
-
-        user.email?.let { imageLoader?.loadAvatar(viewHolder.userImageView, it) }
+        viewHolder.postBody.text = post.body
     }
 
-    override fun getLayout() = R.layout.item_post
+    override fun getLayout() = R.layout.item_post_body
     override fun isClickable() = false
 
     companion object {

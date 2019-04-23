@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.garymcgowan.postapocalypse.R
+import com.garymcgowan.postapocalypse.model.Comment
 import com.garymcgowan.postapocalypse.model.Post
+import com.garymcgowan.postapocalypse.model.User
+import com.garymcgowan.postapocalypse.network.ImageLoader
 import com.garymcgowan.postapocalypse.view.base.BaseFragment
 import com.garymcgowan.postapocalypse.view.postlist.mvp.PostListContract
 import com.xwray.groupie.GroupAdapter
@@ -26,6 +28,7 @@ import javax.inject.Inject
 open class PostListFragment : BaseFragment(), PostListContract.View {
 
     @Inject lateinit var presenter: PostListContract.Presenter
+    @Inject lateinit var imageLoader: ImageLoader
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -33,27 +36,33 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
         return inflater.inflate(R.layout.fragment_post_list, container, false)
     }
 
-    private val groupAdapter = GroupAdapter<ViewHolder>()
-
+    private val groupAdapter = GroupAdapter<ViewHolder>().apply { hasStableIds() }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        with(listRecyclerView) {
+            layoutManager = LinearLayoutManager(context)
+//            addItemDecoration(
+//                DividerItemDecoration(
+//                    context,
+//                    DividerItemDecoration.VERTICAL
+//                )
+//            )
+            adapter = groupAdapter
+        }
 
-        listRecyclerView.layoutManager = LinearLayoutManager(context)
-        listRecyclerView.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                DividerItemDecoration.VERTICAL
-            )
-        )
-        listRecyclerView.adapter = groupAdapter
+        bindPresenter()
+    }
 
+    private fun bindPresenter() {
         groupAdapter.setOnItemClickListener { item, _ ->
             when (item) {
-                is PostItem -> presenter.onItemPressed(item.getPost())
+                is PostItem -> presenter.onItemPressed(item.post, item.user)
                 else -> throw NotImplementedError("Groupie item click not implemented")
             }
         }
+
+        swipeRefresh.setOnRefreshListener { presenter.onListRefreshed() }
     }
 
     override fun onStart() {
@@ -74,30 +83,23 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
         swipeRefresh.isRefreshing = false
     }
 
-    override fun displayPostList(posts: List<Post>) {
-        groupAdapter.addAll(posts.map { PostItem(it) })
+    override fun displayPostList(posts: List<Triple<Post, User, List<Comment>>>) {
+        groupAdapter.update(posts.map { PostItem(it.first, it.second, it.third, imageLoader) })
     }
+
 
     override fun displayErrorForPostList() {
         Toast.makeText(context, "Posts couldn't not be loaded", Toast.LENGTH_LONG).show()
     }
 
-    override fun goToPost(post: Post) {
-//        context?.let {  NavDeepLinkBuilder(it)
-//            .setGraph(R.navigation.nav_graph)
-//            .setDestination(R.id.navigation_details)
-//            .setArguments(Bundle().apply {
-//                putParcelable("post", post)
-//            })
-//            .createPendingIntent().send()
-//        }
-//        val action = PostDetailsFragmentDirections.
+    override fun goToPost(post: Post, user: User) {
         view?.findNavController()
-            ?.navigate(PostListFragmentDirections.actionNavigationListToNavigationDetails(post))
-//        view?.let { Navigation.findNavController(it).navigate(
-//            PostDetailsFragmentArgs.
-//            R.id.navigation_details
-//        ) }
+            ?.navigate(
+                PostListFragmentDirections.actionNavigationListToNavigationDetails(
+                    post,
+                    user
+                )
+            )
     }
 }
 

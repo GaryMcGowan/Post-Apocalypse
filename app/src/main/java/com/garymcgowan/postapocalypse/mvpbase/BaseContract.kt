@@ -33,10 +33,10 @@ interface BaseContract {
             publish()
         }
 
-        internal fun dropView() {
+        open fun dropView() {
             disposables.clear()
         }
 
-        internal fun publish() {}
+        open fun publish() {}
     }
 }

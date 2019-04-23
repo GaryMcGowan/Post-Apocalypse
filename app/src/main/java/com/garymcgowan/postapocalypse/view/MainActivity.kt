@@ -2,7 +2,9 @@ package com.garymcgowan.postapocalypse.view
 
 import android.os.Bundle
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.garymcgowan.postapocalypse.R
 import com.garymcgowan.postapocalypse.view.base.BaseActivity
@@ -14,11 +16,14 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        bottom_navigation.setupWithNavController(
-            Navigation.findNavController(
-                this, R.id.nav_host_fragment
-            )
-        )
+        setupNavigation()
+    }
+
+    private fun setupNavigation() {
+        findNavController(R.id.nav_host_fragment).let {
+            bottom_navigation.setupWithNavController(it)
+            setupActionBarWithNavController(it)
+        }
 
         bottom_navigation.setOnNavigationItemSelectedListener { item ->
             onNavDestinationSelected(
@@ -26,4 +31,7 @@ class MainActivity : BaseActivity() {
             )
         }
     }
+
+    override fun onSupportNavigateUp() =
+        findNavController(R.id.nav_host_fragment).navigateUp()
 }

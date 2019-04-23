@@ -4,4 +4,6 @@
     <string name="nav_post_list">Posts</string>
     <string name="nav_bookmarks">Bookmarks</string>
     <string name="nav_details">Details</string>
+
+    <string name="number_comments">%d Comments</string>
 </resources>

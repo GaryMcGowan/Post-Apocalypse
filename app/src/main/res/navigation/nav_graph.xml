@@ -25,6 +25,9 @@
         <argument
             android:name="post"
             app:argType="com.garymcgowan.postapocalypse.model.Post" />
+        <argument
+            android:name="user"
+            app:argType="com.garymcgowan.postapocalypse.model.User" />
     </fragment>
 
 </navigation>

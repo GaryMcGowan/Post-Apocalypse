@@ -4,7 +4,7 @@
       tools:context="com.garymcgowan.postapocalypse.view.MainActivity">
 
     <item android:id="@+id/navigation_list"
-          android:icon="@drawable/ic_forum_black_24dp"
+        android:icon="@drawable/ic_post_24dp"
           android:title="@string/nav_post_list"/>
     <item android:id="@+id/navigation_bookmarks"
           android:icon="@drawable/ic_collections_bookmark_black_24dp"

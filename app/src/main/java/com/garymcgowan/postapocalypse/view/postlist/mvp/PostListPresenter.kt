@@ -2,7 +2,9 @@ package com.garymcgowan.postapocalypse.view.postlist.mvp
 
 import com.garymcgowan.postapocalypse.core.SchedulerProvider
 import com.garymcgowan.postapocalypse.model.Post
+import com.garymcgowan.postapocalypse.model.User
 import com.garymcgowan.postapocalypse.network.PostsApi
+import io.reactivex.rxkotlin.Singles
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,25 +17,36 @@ class PostListPresenter @Inject constructor(
 
     override fun takeView(view: PostListContract.View) {
         super.takeView(view)
-        fetchPosts()
+        fetchPostsAndUser()
     }
 
     override fun onListRefreshed() {
-        fetchPosts()
+        fetchPostsAndUser()
     }
 
-    override fun onItemPressed(post: Post) {
-        view?.goToPost(post)
+    override fun onItemPressed(post: Post, user: User) {
+        view?.goToPost(post, user)
     }
 
-    private fun fetchPosts() = api.fetchPosts()
-        .doOnSubscribe { view?.showPostListLoading() }
-        .subscribeOn(schedulers.io())
-        .observeOn(schedulers.ui())
-        .subscribe { list, error ->
-            view?.hidePostListLoading()
-            list?.let { view?.displayPostList(it) }
-            error?.let { view?.displayErrorForPostList() }
+    private fun fetchPostsAndUser() =
+        Singles.zip(
+            api.fetchPosts(),
+            api.fetchUsers(),
+            api.fetchComments()
+        ) { posts, users, comments ->
+            posts.mapNotNull { post ->
+                users.find { user -> user.id == post.userId }?.let { user ->
+                    Triple(post, user, comments.filter { it.postId == post.id })
+                }
+            }
         }
-        .also { disposables += it }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .doOnSubscribe { view?.showPostListLoading() }
+            .doOnEvent { _, _ -> view?.hidePostListLoading() }
+            .subscribe(
+                { view?.displayPostList(it) }, // success
+                { view?.displayErrorForPostList() } //error
+            )
+            .also { disposables += it }
 }
