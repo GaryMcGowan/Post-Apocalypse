@@ -5,6 +5,14 @@
     <string name="nav_bookmarks">Bookmarks</string>
     <string name="nav_details">Details</string>
 
-    <string name="number_comments">%d Comments</string>
+    <plurals name="number_comments">
+        <item quantity="one">%d Comment</item>
+        <item quantity="other">%d Comments</item>
+    </plurals>
+
     <string name="title_comments">Comments:</string>
+    <string name="empty_list">No posts yet</string>
+    <string name="bookmarks_empty">Bookmarks coming soon…</string>
+    <string name="error_post_list">Posts could not be loaded. Check your connection and try again</string>
+    <string name="error_post_details">Comments could not be loaded. Check your connection and try again</string>
 </resources>

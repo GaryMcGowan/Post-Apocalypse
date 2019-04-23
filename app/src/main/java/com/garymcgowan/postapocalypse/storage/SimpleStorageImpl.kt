@@ -15,7 +15,10 @@ class SimpleStorageImpl @Inject constructor() : StorageRepository {
         Observable.just(memoryStorage.values.toList())
 
     override fun addBookmark(post: Post) {
-        memoryStorage.put(post.id, post)
+        memoryStorage[post.id] = post
     }
+
+    override fun isBookmarked(post: Post): Observable<Boolean> =
+        Observable.just(memoryStorage.containsKey(post.id))
 
 }

@@ -30,6 +30,7 @@ class PostDetailsPresenter @Inject constructor(
 
     private fun fetchCommentsForPost(post: Post) =
         api.fetchComments()
+            //filter only comments related to this post
             .map { list -> list.filter { it.postId == post.id } }
             .subscribeOn(schedulers.io())
             .observeOn(schedulers.ui())

@@ -6,4 +6,5 @@ import io.reactivex.Observable
 interface StorageRepository {
     fun getBookmarks(): Observable<List<Post>>
     fun addBookmark(post: Post)
+    fun isBookmarked(post: Post): Observable<Boolean>
 }

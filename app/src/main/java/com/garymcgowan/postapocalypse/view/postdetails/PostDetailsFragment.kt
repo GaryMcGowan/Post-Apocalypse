@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.garymcgowan.postapocalypse.R
@@ -14,6 +13,7 @@ import com.garymcgowan.postapocalypse.model.User
 import com.garymcgowan.postapocalypse.network.ImageLoader
 import com.garymcgowan.postapocalypse.view.base.BaseFragment
 import com.garymcgowan.postapocalypse.view.postdetails.mvp.PostDetailsContract
+import com.google.android.material.snackbar.Snackbar
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
@@ -28,8 +28,9 @@ class PostDetailsFragment : BaseFragment(), PostDetailsContract.View {
 
     private val args: PostDetailsFragmentArgs by navArgs()
 
-    val postSection: Section = Section()
-    val commentSection: Section = Section()
+    private val postSection: Section = Section()
+    private val commentSection: Section = Section()
+
     private val groupAdapter = GroupAdapter<ViewHolder>().apply {
         addAll(listOf(postSection, commentSection))
         setHasStableIds(true)
@@ -83,6 +84,10 @@ class PostDetailsFragment : BaseFragment(), PostDetailsContract.View {
     }
 
     override fun displayErrorForComments() {
-        Toast.makeText(context, "Comments couldn't not be loaded", Toast.LENGTH_LONG).show()
+        Snackbar.make(
+            coordinatorLayout,
+            getString(R.string.error_post_details),
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 }

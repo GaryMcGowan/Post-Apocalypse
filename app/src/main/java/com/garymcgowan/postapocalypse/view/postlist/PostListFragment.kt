@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.garymcgowan.postapocalypse.R
@@ -14,13 +13,9 @@ import com.garymcgowan.postapocalypse.model.User
 import com.garymcgowan.postapocalypse.network.ImageLoader
 import com.garymcgowan.postapocalypse.view.base.BaseFragment
 import com.garymcgowan.postapocalypse.view.postlist.mvp.PostListContract
+import com.google.android.material.snackbar.Snackbar
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
-import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.ViewHolder
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.android.MainThreadDisposable
 import kotlinx.android.synthetic.main.fragment_post_list.*
 import javax.inject.Inject
 
@@ -78,12 +73,18 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
     }
 
     override fun displayPostList(posts: List<Triple<Post, User, List<Comment>>>) {
-        groupAdapter.update(posts.map { PostItem(it.first, it.second, it.third, imageLoader) })
+        if (posts.isEmpty()) {
+            if (emptyViewSwitcher.currentView != emptyText) emptyViewSwitcher.showNext()
+        } else {
+            if (emptyViewSwitcher.currentView != listRecyclerView) emptyViewSwitcher.showNext()
+            groupAdapter.update(posts.map { PostItem(it.first, it.second, it.third, imageLoader) })
+        }
     }
 
 
     override fun displayErrorForPostList() {
-        Toast.makeText(context, "Posts couldn't not be loaded", Toast.LENGTH_LONG).show()
+        Snackbar.make(coordinatorLayout, getString(R.string.error_post_list), Snackbar.LENGTH_LONG)
+            .show()
     }
 
     override fun goToPost(post: Post, user: User) {
@@ -94,32 +95,5 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
                     user
                 )
             )
-    }
-}
-
-private fun GroupAdapter<ViewHolder>.itemClicks(): Observable<Item<*>> = ItemClicksObservable(this)
-class ItemClicksObservable(private val groupAdapter: GroupAdapter<ViewHolder>) :
-    Observable<Item<*>>() {
-
-    override fun subscribeActual(observer: Observer<in Item<*>>) {
-        val listener = Listener(groupAdapter, observer)
-        observer.onSubscribe(listener)
-        groupAdapter.setOnItemClickListener(listener)
-    }
-
-    private class Listener(
-        private val groupAdapter: GroupAdapter<ViewHolder>,
-        private val observer: Observer<in Item<*>>
-    ) : MainThreadDisposable(), OnItemClickListener {
-
-        override fun onItemClick(item: Item<*>, view: View) {
-            if (!isDisposed) {
-                observer.onNext(item)
-            }
-        }
-
-        override fun onDispose() {
-            groupAdapter.setOnItemClickListener(null)
-        }
     }
 }

@@ -20,7 +20,8 @@ class PostItem(
         viewHolder.postTitle.text = post.title
 
         viewHolder.commentCount.apply {
-            text = resources.getString(R.string.number_comments, comments.size)
+            text = resources
+                .getQuantityString(R.plurals.number_comments, comments.size, comments.size)
         }
 
         imageLoader?.loadAvatar(viewHolder.userImageView, user.email)
