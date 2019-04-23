@@ -36,18 +36,12 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
         return inflater.inflate(R.layout.fragment_post_list, container, false)
     }
 
-    private val groupAdapter = GroupAdapter<ViewHolder>().apply { hasStableIds() }
+    private val groupAdapter = GroupAdapter<ViewHolder>().apply { setHasStableIds(true) }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         with(listRecyclerView) {
             layoutManager = LinearLayoutManager(context)
-//            addItemDecoration(
-//                DividerItemDecoration(
-//                    context,
-//                    DividerItemDecoration.VERTICAL
-//                )
-//            )
             adapter = groupAdapter
         }
 

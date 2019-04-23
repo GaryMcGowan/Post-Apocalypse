@@ -18,7 +18,7 @@ class ImageLoaderImpl @Inject constructor(
         glide.load(url).into(view)
     }
 
-    override fun loadAvatar(view: AppCompatImageView, email: String) {
+    override fun loadAvatar(view: AppCompatImageView, email: String?) {
         glide.load("$avatarUrlString/100/$email.png")
             .placeholder(R.color.colorBackgroundSecondary)
             .error(R.color.colorBackgroundSecondary)

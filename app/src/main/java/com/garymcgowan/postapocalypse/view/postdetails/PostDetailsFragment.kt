@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.garymcgowan.postapocalypse.R
 import com.garymcgowan.postapocalypse.model.Comment
 import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.model.User
+import com.garymcgowan.postapocalypse.network.ImageLoader
 import com.garymcgowan.postapocalypse.view.base.BaseFragment
 import com.garymcgowan.postapocalypse.view.postdetails.mvp.PostDetailsContract
 import com.xwray.groupie.GroupAdapter
@@ -24,13 +24,16 @@ import javax.inject.Inject
 class PostDetailsFragment : BaseFragment(), PostDetailsContract.View {
 
     @Inject lateinit var presenter: PostDetailsContract.Presenter
+    @Inject lateinit var imageLoader: ImageLoader
 
     private val args: PostDetailsFragmentArgs by navArgs()
 
     val postSection: Section = Section()
     val commentSection: Section = Section()
-    private val groupAdapter =
-        GroupAdapter<ViewHolder>().apply { addAll(listOf(postSection, commentSection)) }
+    private val groupAdapter = GroupAdapter<ViewHolder>().apply {
+        addAll(listOf(postSection, commentSection))
+        setHasStableIds(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -43,12 +46,6 @@ class PostDetailsFragment : BaseFragment(), PostDetailsContract.View {
 
         with(detailsRecyclerView) {
             layoutManager = LinearLayoutManager(context)
-            addItemDecoration(
-                DividerItemDecoration(
-                    context,
-                    DividerItemDecoration.VERTICAL
-                )
-            )
             adapter = groupAdapter
         }
         bindPresenter()
@@ -78,11 +75,11 @@ class PostDetailsFragment : BaseFragment(), PostDetailsContract.View {
     }
 
     override fun displayPostDetails(post: Post, user: User) {
-        postSection.add(PostBodyItem(post, user))
+        postSection.add(PostBodyItem(post, user, imageLoader))
     }
 
     override fun displayComments(comments: List<Comment>) {
-        commentSection.update(comments.map { CommentItem(it) })
+        commentSection.update(comments.map { CommentItem(it, imageLoader) })
     }
 
     override fun displayErrorForComments() {

@@ -23,11 +23,11 @@ class PostItem(
             text = resources.getString(R.string.number_comments, comments.size)
         }
 
-        user.email?.let { imageLoader?.loadAvatar(viewHolder.userImageView, it) }
+        imageLoader?.loadAvatar(viewHolder.userImageView, user.email)
     }
 
     override fun getLayout() = R.layout.item_post
-    override fun isClickable() = false
+    override fun isClickable() = true
 
     companion object {
         private fun Post.getId() = (id.toLong() + javaClass.hashCode() * 1000)

@@ -5,40 +5,106 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/userImageView"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/userName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/userImageView"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Gary" />
+    android:paddingTop="16dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
     <TextView
         android:id="@+id/postTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textColor="@color/colorTextPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userImageView"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Title" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/userImageView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postTitle"
+        tools:src="@mipmap/ic_launcher" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/userName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/userImageView"
+        app:layout_constraintTop_toTopOf="@+id/userImageView"
+        tools:text="Gary" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/userEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/userImageView"
+        app:layout_constraintTop_toBottomOf="@+id/userName"
+        tools:text="email" />
+
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/userBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="userEmail,userImageView" />
+
 
     <TextView
         android:id="@+id/postBody"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postTitle"
-        tools:text="@tools:sample/lorem" />
+        app:layout_constraintTop_toBottomOf="@+id/userBarrier"
+        tools:maxHeight="200dp"
+        tools:text="@tools:sample/lorem/random" />
+
+    <View
+        android:id="@+id/commentsDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBackgroundSecondary"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/postBody" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/commentIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/commentsDivider"
+        app:srcCompat="@drawable/ic_comment_black_24dp"
+        app:tint="@color/colorTextSecondary" />
+
+    <TextView
+        android:id="@+id/commentsHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:textSize="12sp"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical"
+        android:text="@string/title_comments"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="@+id/commentIcon"
+        app:layout_constraintStart_toEndOf="@+id/commentIcon"
+        app:layout_constraintTop_toTopOf="@+id/commentIcon"
+
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

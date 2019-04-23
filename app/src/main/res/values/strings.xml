@@ -6,4 +6,5 @@
     <string name="nav_details">Details</string>
 
     <string name="number_comments">%d Comments</string>
+    <string name="title_comments">Comments:</string>
 </resources>
