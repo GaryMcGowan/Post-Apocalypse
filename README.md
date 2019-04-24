@@ -8,7 +8,7 @@ Post-Apocalypse (excuse the pun) is a sample app for learning new things. This s
 
 ## Technical
 This app has been initially structured using an MVP architecture as this is what I have the most experience using and testing.
-I also dabbled a bit with MVI however, due to time constraints, I will have to complete this in the future.
+I also dabbled a bit with MVI. However, due to time constraints, I will have to complete this in the future.
 
 100% written in Kotlin. Of course.
 
