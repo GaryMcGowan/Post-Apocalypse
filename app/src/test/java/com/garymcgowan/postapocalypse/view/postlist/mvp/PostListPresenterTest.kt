@@ -6,6 +6,7 @@ import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.model.User
 import com.garymcgowan.postapocalypse.network.PostsApi
 import com.garymcgowan.postapocalypse.utils.TestSchedulerProvider
+import com.garymcgowan.postapocalypse.view.postlist.PostItemViewState
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
@@ -59,7 +60,15 @@ class PostListPresenterTest {
         verify(api, times(1)).fetchUsers()
         verify(api, times(1)).fetchComments()
 
-        verify(view, times(1)).displayPostList(listOf(Triple(post, user, listOf(comment))))
+        verify(view, times(1)).displayListViewState(
+            listOf(
+                PostItemViewState(
+                    post,
+                    user,
+                    listOf(comment)
+                )
+            )
+        )
 
     }
 
@@ -81,7 +90,15 @@ class PostListPresenterTest {
         verify(api, times(2)).fetchComments()
 
         //only once because results haven't changed (distinct only)
-        verify(view, times(1)).displayPostList(listOf(Triple(post, user, listOf(comment))))
+        verify(view, times(1)).displayListViewState(
+            listOf(
+                PostItemViewState(
+                    post,
+                    user,
+                    listOf(comment)
+                )
+            )
+        )
     }
 
 
@@ -100,7 +117,15 @@ class PostListPresenterTest {
         verify(api, times(1)).fetchPosts()
         verify(api, times(1)).fetchUsers()
         verify(api, times(1)).fetchComments()
-        verify(view, times(1)).displayPostList(listOf(Triple(post, user, listOf(comment))))
+        verify(view, times(1)).displayListViewState(
+            listOf(
+                PostItemViewState(
+                    post,
+                    user,
+                    listOf(comment)
+                )
+            )
+        )
 
         verify(view, times(1)).goToPost(post, user)
     }
@@ -120,7 +145,15 @@ class PostListPresenterTest {
         verify(api, times(1)).fetchPosts()
         verify(api, times(1)).fetchUsers()
         verify(api, times(1)).fetchComments()
-        verify(view, times(1)).displayPostList(listOf(Triple(post, user, listOf(comment))))
+        verify(view, times(1)).displayListViewState(
+            listOf(
+                PostItemViewState(
+                    post,
+                    user,
+                    listOf(comment)
+                )
+            )
+        )
     }
 
 

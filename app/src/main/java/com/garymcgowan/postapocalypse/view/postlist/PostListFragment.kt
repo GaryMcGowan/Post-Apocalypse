@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.garymcgowan.postapocalypse.R
-import com.garymcgowan.postapocalypse.model.Comment
 import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.model.User
 import com.garymcgowan.postapocalypse.network.ImageLoader
@@ -46,7 +45,10 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
     private fun bindPresenter() {
         groupAdapter.setOnItemClickListener { item, _ ->
             when (item) {
-                is PostItem -> presenter.onItemPressed(item.post, item.user)
+                is PostItem -> presenter.onItemPressed(
+                    item.postItemViewState.post,
+                    item.postItemViewState.user
+                )
                 else -> throw NotImplementedError("Groupie item click not implemented")
             }
         }
@@ -72,12 +74,12 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
         swipeRefresh.isRefreshing = false
     }
 
-    override fun displayPostList(posts: List<Triple<Post, User, List<Comment>>>) {
-        if (posts.isEmpty()) {
+    override fun displayListViewState(state: List<PostItemViewState>) {
+        if (state.isEmpty()) {
             if (emptyViewSwitcher.currentView != emptyText) emptyViewSwitcher.showNext()
         } else {
             if (emptyViewSwitcher.currentView != listRecyclerView) emptyViewSwitcher.showNext()
-            groupAdapter.update(posts.map { PostItem(it.first, it.second, it.third, imageLoader) })
+            groupAdapter.update(state.map { PostItem(it, imageLoader) })
         }
     }
 

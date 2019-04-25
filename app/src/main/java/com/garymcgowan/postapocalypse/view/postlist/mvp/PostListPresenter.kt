@@ -1,10 +1,10 @@
 package com.garymcgowan.postapocalypse.view.postlist.mvp
 
 import com.garymcgowan.postapocalypse.core.SchedulerProvider
-import com.garymcgowan.postapocalypse.model.Comment
 import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.model.User
 import com.garymcgowan.postapocalypse.network.PostsApi
+import com.garymcgowan.postapocalypse.view.postlist.PostItemViewState
 import io.reactivex.rxkotlin.Singles
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
@@ -18,12 +18,12 @@ class PostListPresenter @Inject constructor(
 ) : PostListContract.Presenter() {
 
     // ViewState stores Posts by User with Comments[] and keeps in memory (while presenter lives)
-    private var viewState: List<Triple<Post, User, List<Comment>>> by Delegates.observable(emptyList()) { _, old, new ->
+    private var viewState: List<PostItemViewState> by Delegates.observable(emptyList()) { _, old, new ->
         if (old != new) publish()
     }
 
     override fun publish() {
-        view?.displayPostList(viewState)
+        view?.displayListViewState(viewState)
     }
 
     override fun takeView(view: PostListContract.View) {
@@ -49,7 +49,7 @@ class PostListPresenter @Inject constructor(
             //combine all api calls into Posts by User with Comments[]
             posts.mapNotNull { post ->
                 users.find { user -> user.id == post.userId }?.let { user ->
-                    Triple(post, user, comments.filter { it.postId == post.id })
+                    PostItemViewState(post, user, comments.filter { it.postId == post.id })
                 }
             }
         }
