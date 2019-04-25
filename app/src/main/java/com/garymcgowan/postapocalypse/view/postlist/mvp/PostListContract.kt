@@ -18,5 +18,6 @@ interface PostListContract : BaseContract {
     abstract class Presenter : BaseContract.BasePresenter<View>() {
         abstract fun onListRefreshed()
         abstract fun onItemPressed(post: Post, user: User)
+        abstract fun onBookmarkPressed(post: Post, bookmarked: Boolean)
     }
 }

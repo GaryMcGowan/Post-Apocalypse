@@ -5,6 +5,7 @@ import com.garymcgowan.postapocalypse.model.Comment
 import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.model.User
 import com.garymcgowan.postapocalypse.network.PostsApi
+import com.garymcgowan.postapocalypse.storage.StorageRepository
 import io.reactivex.rxkotlin.Singles
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
@@ -14,6 +15,7 @@ import kotlin.properties.Delegates
 @Singleton
 class PostListPresenter @Inject constructor(
     private val api: PostsApi,
+    private val storage: StorageRepository,
     private val schedulers: SchedulerProvider
 ) : PostListContract.Presenter() {
 
@@ -28,20 +30,37 @@ class PostListPresenter @Inject constructor(
 
     override fun takeView(view: PostListContract.View) {
         super.takeView(view)
-        fetchPostsAndUser()
+        fetchPostsWithUserAndComments()
     }
 
     override fun onListRefreshed() {
-        fetchPostsAndUser()
+        fetchPostsWithUserAndComments()
     }
 
     override fun onItemPressed(post: Post, user: User) {
         view?.goToPost(post, user)
     }
 
-    private fun fetchPostsAndUser() =
+    override fun onBookmarkPressed(post: Post, bookmarked: Boolean) {
+        val newPost = post.copy(bookmarked = bookmarked)
+        disposables += storage.setBookmarked(newPost, bookmarked)
+            .map {
+                viewState.toMutableList().apply {
+                    replaceAll {
+                        if (it.first.id == post.id) it.copy(first = newPost) else it
+                    }
+                }.toList()
+            }
+            .subscribeOn(schedulers.io())
+            .observeOn(schedulers.ui())
+            .subscribe(
+                { viewState = it },
+                { /*TODO error*/ throw it })
+    }
+
+    private fun fetchPostsWithUserAndComments() =
         Singles.zip(
-            api.fetchPosts(),
+            fetchPostsWithStorageState(),
             api.fetchUsers(),
             api.fetchComments()
         ) { posts, users, comments ->
@@ -62,4 +81,11 @@ class PostListPresenter @Inject constructor(
                 { view?.displayErrorForPostList() } //error
             )
             .also { disposables += it }
+
+    private fun fetchPostsWithStorageState() =
+        api.fetchPosts()
+            .flattenAsFlowable { it }
+            .flatMapSingle { post -> storage.isBookmarked(post).map { post.copy(bookmarked = it) } }
+            .collectInto(mutableListOf<Post>()) { list, post -> list += post }.map { it.toList() }
+
 }

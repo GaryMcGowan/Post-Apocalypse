@@ -13,7 +13,8 @@ class PostItem(
     val post: Post,
     val user: User,
     val comments: List<Comment>,
-    private val imageLoader: ImageLoader? = null
+    private val imageLoader: ImageLoader? = null,
+    val onBookmarked: (post: Post) -> Unit
 ) : Item(post.getId()) {
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.userName.text = user.name
@@ -22,6 +23,11 @@ class PostItem(
         viewHolder.commentCount.apply {
             text = resources
                 .getQuantityString(R.plurals.number_comments, comments.size, comments.size)
+        }
+
+        viewHolder.bookmarkIcon.apply {
+            if (isChecked != post.bookmarked) isChecked = post.bookmarked
+            setOnCheckedChangeListener { compoundButton, b -> onBookmarked(post) }
         }
 
         imageLoader?.loadAvatar(viewHolder.userImageView, user.email)

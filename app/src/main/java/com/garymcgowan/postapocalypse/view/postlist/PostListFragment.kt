@@ -54,6 +54,7 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
         swipeRefresh.setOnRefreshListener { presenter.onListRefreshed() }
     }
 
+
     override fun onStart() {
         super.onStart()
         presenter.takeView(this)
@@ -77,9 +78,19 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
             if (emptyViewSwitcher.currentView != emptyText) emptyViewSwitcher.showNext()
         } else {
             if (emptyViewSwitcher.currentView != listRecyclerView) emptyViewSwitcher.showNext()
-            groupAdapter.update(posts.map { PostItem(it.first, it.second, it.third, imageLoader) })
+            groupAdapter.update(posts.map {
+                PostItem(
+                    it.first,
+                    it.second,
+                    it.third,
+                    imageLoader,
+                    test
+                )
+            })
         }
     }
+
+    val test: (post: Post) -> Unit = { presenter.onBookmarkPressed(it, it.bookmarked.not()) }
 
 
     override fun displayErrorForPostList() {
