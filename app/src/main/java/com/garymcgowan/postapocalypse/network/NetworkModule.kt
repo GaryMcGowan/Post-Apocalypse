@@ -48,6 +48,10 @@ class NetworkModule {
 
     @Provides
     @Singleton
+    fun providesNetworkRepositor(impl: NetworkRepositoryImpl): NetworkRepository = impl
+
+    @Provides
+    @Singleton
     fun provideApi(retrofit: Retrofit): PostsApi {
         return retrofit.create(PostsApi::class.java)
 

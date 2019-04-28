@@ -3,7 +3,7 @@ package com.garymcgowan.postapocalypse.view.postlist.mvp
 import com.garymcgowan.postapocalypse.core.SchedulerProvider
 import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.model.User
-import com.garymcgowan.postapocalypse.network.PostsApi
+import com.garymcgowan.postapocalypse.network.NetworkRepository
 import com.garymcgowan.postapocalypse.view.postlist.PostItemViewState
 import io.reactivex.rxkotlin.Singles
 import io.reactivex.rxkotlin.plusAssign
@@ -13,7 +13,7 @@ import kotlin.properties.Delegates
 
 @Singleton
 class PostListPresenter @Inject constructor(
-    private val api: PostsApi,
+    private val network: NetworkRepository,
     private val schedulers: SchedulerProvider
 ) : PostListContract.Presenter() {
 
@@ -41,9 +41,9 @@ class PostListPresenter @Inject constructor(
 
     private fun fetchPostsAndUser() =
         Singles.zip(
-            api.fetchPosts(),
-            api.fetchUsers(),
-            api.fetchComments()
+            network.getPosts(),
+            network.getUsers(),
+            network.getComments()
         ) { posts, users, comments ->
 
             //combine all api calls into Posts by User with Comments[]

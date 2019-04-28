@@ -4,7 +4,7 @@ import com.garymcgowan.postapocalypse.core.SchedulerProvider
 import com.garymcgowan.postapocalypse.model.Comment
 import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.model.User
-import com.garymcgowan.postapocalypse.network.PostsApi
+import com.garymcgowan.postapocalypse.network.NetworkRepository
 import com.garymcgowan.postapocalypse.utils.TestSchedulerProvider
 import com.garymcgowan.postapocalypse.view.postlist.PostItemViewState
 import com.nhaarman.mockito_kotlin.given
@@ -26,7 +26,7 @@ class PostListPresenterTest {
     @get:Rule val mockitoRule = MockitoJUnit.rule()
 
     //MOCKS
-    @Mock lateinit var api: PostsApi
+    @Mock lateinit var network: NetworkRepository
     @Mock lateinit var view: PostListContract.View
     @Spy private val scheduler: SchedulerProvider = TestSchedulerProvider()
 
@@ -39,16 +39,16 @@ class PostListPresenterTest {
 
     @After
     fun tearDown() {
-        verifyNoMoreInteractions(api)
+        verifyNoMoreInteractions(network)
     }
 
     @Test
     fun `Given user lands on screen, posts are requested`() {
 
         // Given
-        given(api.fetchPosts()).willReturn(Single.just(listOf(post)))
-        given(api.fetchUsers()).willReturn(Single.just(listOf(user)))
-        given(api.fetchComments()).willReturn(Single.just(listOf(comment)))
+        given(network.getPosts()).willReturn(Single.just(listOf(post)))
+        given(network.getUsers()).willReturn(Single.just(listOf(user)))
+        given(network.getComments()).willReturn(Single.just(listOf(comment)))
 
         // When
         presenter.takeView(view)
@@ -56,9 +56,9 @@ class PostListPresenterTest {
         // Then
         verify(view, times(1)).showPostListLoading()
         verify(view, times(1)).showPostListLoading()
-        verify(api, times(1)).fetchPosts()
-        verify(api, times(1)).fetchUsers()
-        verify(api, times(1)).fetchComments()
+        verify(network, times(1)).getPosts()
+        verify(network, times(1)).getUsers()
+        verify(network, times(1)).getComments()
 
         verify(view, times(1)).displayListViewState(
             listOf(
@@ -85,9 +85,9 @@ class PostListPresenterTest {
         // Then
         verify(view, times(2)).showPostListLoading()
         verify(view, times(2)).showPostListLoading()
-        verify(api, times(2)).fetchPosts()
-        verify(api, times(2)).fetchUsers()
-        verify(api, times(2)).fetchComments()
+        verify(network, times(2)).getPosts()
+        verify(network, times(2)).getUsers()
+        verify(network, times(2)).getComments()
 
         //only once because results haven't changed (distinct only)
         verify(view, times(1)).displayListViewState(
@@ -114,9 +114,9 @@ class PostListPresenterTest {
         // Then
         verify(view, times(1)).showPostListLoading()
         verify(view, times(1)).showPostListLoading()
-        verify(api, times(1)).fetchPosts()
-        verify(api, times(1)).fetchUsers()
-        verify(api, times(1)).fetchComments()
+        verify(network, times(1)).getPosts()
+        verify(network, times(1)).getUsers()
+        verify(network, times(1)).getComments()
         verify(view, times(1)).displayListViewState(
             listOf(
                 PostItemViewState(
@@ -142,9 +142,9 @@ class PostListPresenterTest {
         // Then
         verify(view, times(1)).showPostListLoading()
         verify(view, times(1)).showPostListLoading()
-        verify(api, times(1)).fetchPosts()
-        verify(api, times(1)).fetchUsers()
-        verify(api, times(1)).fetchComments()
+        verify(network, times(1)).getPosts()
+        verify(network, times(1)).getUsers()
+        verify(network, times(1)).getComments()
         verify(view, times(1)).displayListViewState(
             listOf(
                 PostItemViewState(
@@ -162,9 +162,9 @@ class PostListPresenterTest {
     fun `Given one network error when screen loads, error message is displayed`() {
 
         // Given
-        given(api.fetchPosts()).willReturn(Single.error(Throwable("Something went wrong")))
-        given(api.fetchUsers()).willReturn(Single.just(listOf(user)))
-        given(api.fetchComments()).willReturn(Single.just(listOf(comment)))
+        given(network.getPosts()).willReturn(Single.error(Throwable("Something went wrong")))
+        given(network.getUsers()).willReturn(Single.just(listOf(user)))
+        given(network.getComments()).willReturn(Single.just(listOf(comment)))
 
         // When
         presenter.takeView(view)
@@ -172,9 +172,9 @@ class PostListPresenterTest {
         // Then
         verify(view, times(1)).showPostListLoading()
         verify(view, times(1)).showPostListLoading()
-        verify(api, times(1)).fetchPosts()
-        verify(api, times(1)).fetchUsers()
-        verify(api, times(1)).fetchComments()
+        verify(network, times(1)).getPosts()
+        verify(network, times(1)).getUsers()
+        verify(network, times(1)).getComments()
         verify(view, times(1)).displayErrorForPostList()
     }
 
@@ -182,9 +182,9 @@ class PostListPresenterTest {
     fun `Given all network error when screen loads, error message is displayed`() {
 
         // Given
-        given(api.fetchPosts()).willReturn(Single.error(Throwable("Something went wrong")))
-        given(api.fetchUsers()).willReturn(Single.error(Throwable("Something went wrong")))
-        given(api.fetchComments()).willReturn(Single.error(Throwable("Something went wrong")))
+        given(network.getPosts()).willReturn(Single.error(Throwable("Something went wrong")))
+        given(network.getUsers()).willReturn(Single.error(Throwable("Something went wrong")))
+        given(network.getComments()).willReturn(Single.error(Throwable("Something went wrong")))
 
         // When
         presenter.takeView(view)
@@ -192,9 +192,9 @@ class PostListPresenterTest {
         // Then
         verify(view, times(1)).showPostListLoading()
         verify(view, times(1)).showPostListLoading()
-        verify(api, times(1)).fetchPosts()
-        verify(api, times(1)).fetchUsers()
-        verify(api, times(1)).fetchComments()
+        verify(network, times(1)).getPosts()
+        verify(network, times(1)).getUsers()
+        verify(network, times(1)).getComments()
         verify(view, times(1)).displayErrorForPostList()
     }
     //endregion

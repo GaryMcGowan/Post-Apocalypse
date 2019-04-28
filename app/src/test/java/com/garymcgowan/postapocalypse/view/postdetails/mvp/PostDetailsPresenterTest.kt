@@ -4,7 +4,7 @@ import com.garymcgowan.postapocalypse.core.SchedulerProvider
 import com.garymcgowan.postapocalypse.model.Comment
 import com.garymcgowan.postapocalypse.model.Post
 import com.garymcgowan.postapocalypse.model.User
-import com.garymcgowan.postapocalypse.network.PostsApi
+import com.garymcgowan.postapocalypse.network.NetworkRepository
 import com.garymcgowan.postapocalypse.utils.TestSchedulerProvider
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.times
@@ -25,7 +25,7 @@ class PostDetailsPresenterTest {
     @get:Rule val mockitoRule = MockitoJUnit.rule()
 
     //MOCKS
-    @Mock lateinit var api: PostsApi
+    @Mock lateinit var network: NetworkRepository
     @Mock lateinit var view: PostDetailsContract.View
     @Spy private val scheduler: SchedulerProvider = TestSchedulerProvider()
 
@@ -38,14 +38,14 @@ class PostDetailsPresenterTest {
 
     @After
     fun tearDown() {
-        verifyNoMoreInteractions(api)
+        verifyNoMoreInteractions(network)
     }
 
     @Test
     fun `Given user lands on screen, comments are requested`() {
 
         // Given
-        given(api.fetchComments()).willReturn(Single.just(listOf(comment)))
+        given(network.getComments()).willReturn(Single.just(listOf(comment)))
 
         // When
         presenter.takeView(view)
@@ -54,7 +54,7 @@ class PostDetailsPresenterTest {
         // Then
         verify(view, times(1)).showCommentsLoading()
         verify(view, times(1)).showCommentsLoading()
-        verify(api, times(1)).fetchComments()
+        verify(network, times(1)).getComments()
 
         verify(view, times(1)).displayComments(listOf(comment))
 
@@ -72,7 +72,7 @@ class PostDetailsPresenterTest {
         // Then
         verify(view, times(2)).showCommentsLoading()
         verify(view, times(2)).showCommentsLoading()
-        verify(api, times(2)).fetchComments()
+        verify(network, times(2)).getComments()
 
         verify(view, times(2)).displayComments(listOf(comment))
     }
@@ -89,7 +89,7 @@ class PostDetailsPresenterTest {
         // Then
         verify(view, times(1)).showCommentsLoading()
         verify(view, times(1)).showCommentsLoading()
-        verify(api, times(1)).fetchComments()
+        verify(network, times(1)).getComments()
 
         verify(view, times(1)).displayComments(listOf(comment))
     }
@@ -100,7 +100,7 @@ class PostDetailsPresenterTest {
     fun `Given network error when screen loads, error message is displayed`() {
 
         // Given
-        given(api.fetchComments()).willReturn(Single.error(Throwable("Something went wrong")))
+        given(network.getComments()).willReturn(Single.error(Throwable("Something went wrong")))
 
         // When
         presenter.takeView(view)
@@ -109,7 +109,7 @@ class PostDetailsPresenterTest {
         // Then
         verify(view, times(1)).showCommentsLoading()
         verify(view, times(1)).hideCommentsLoading()
-        verify(api, times(1)).fetchComments()
+        verify(network, times(1)).getComments()
         verify(view, times(1)).displayErrorForComments()
     }
     //endregion
