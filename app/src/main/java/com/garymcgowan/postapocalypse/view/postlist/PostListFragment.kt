@@ -76,9 +76,9 @@ open class PostListFragment : BaseFragment(), PostListContract.View {
 
     override fun displayListViewState(state: List<PostItemViewState>) {
         if (state.isEmpty()) {
-            if (emptyViewSwitcher.currentView != emptyText) emptyViewSwitcher.showNext()
+            emptyViewSwitcher.displayedChild = emptyViewSwitcher.indexOfChild(emptyText)
         } else {
-            if (emptyViewSwitcher.currentView != listRecyclerView) emptyViewSwitcher.showNext()
+            emptyViewSwitcher.displayedChild = emptyViewSwitcher.indexOfChild(listRecyclerView)
             groupAdapter.update(state.map { PostItem(it, imageLoader) })
         }
     }
